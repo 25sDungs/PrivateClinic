@@ -1,21 +1,32 @@
 .ipNum {
-    border: 1px solid black;
-    border-radius: 5px;
+    margin: 0;
+    padding: 2px;
+    border: 2px solid black;
+    border-radius: 10px;
     font-size: 16px;
     text-align: center;
+    height: 30px;
 }
 
 .btn-radius {
-    border-radius: 5px;
+    border-radius: 10px;
+}
+
+h2{
+    padding: 0 0 0 5px;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 22px;
 }
 
 .btnQuyDinh {
     font-size: 16px;
     margin: 0 2px 0 2px;
+    background-color: #0dcaf0;
 }
 
-.home div {
-    margin: 0 2px 0 2px;
+form{
+    font-size: 16px;
 }
 
 

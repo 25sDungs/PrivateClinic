@@ -1,0 +1,40 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename= 'css/quydinh.css') }}">
+
+<h1>Các Quy Định</h1>
+<form method="post" action="/update">
+    {% for qd in quydinh %}
+    {% if qd.id==1 %}
+    <div class="row">
+        <div class="col">
+            <h2>Số Bệnh Nhân Khám Trong Ngày: </h2>
+        </div>
+        <label class="ipNum col">{{ qd.GiaTri }}</label>
+        <input type="number" class="ipNum col ml-3" id="ipBenhNhanMoi" name="ipBenhNhanMoi" placeholder="Nhập số lượng bệnh nhân mới"
+               min="0" max="1000000">
+    </div>
+    {% endif %}
+    {% if qd.id==2 %}
+    <div class="row">
+        <div class="col">
+            <h2>Số Tiền Khám: </h2>
+        </div>
+        <label class="ipNum col">{{ "{:,.0f}".format(qd.GiaTri) }} VNĐ</label>
+        <input type="number" class="ipNum col ml-3" id="ipTienMoi" name="ipTienMoi" placeholder="Nhập số tiền khám mới" min="0"
+               max="100000000">
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="d-flex justify-content-around">
+        <button class="btn btn-radius btnQuyDinh" type="submit" value="updateSoLuong" name="btnCnBenhNhan">
+            Cập Nhật Số Bệnh Nhân
+        </button>
+        <button class="btn btn-radius btnQuyDinh" type="submit" value="updateTien" name="btnCnTienKham">
+            Cập Nhật Số Tiền Khám
+        </button>
+    </div>
+</form>
+{% endblock %}

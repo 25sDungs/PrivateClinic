@@ -8,9 +8,6 @@
     height: 30px;
 }
 
-.btn-radius {
-    border-radius: 10px;
-}
 
 h2{
     padding: 0 0 0 5px;
@@ -20,6 +17,7 @@ h2{
 }
 
 .btnQuyDinh {
+    border-radius: 10px;
     font-size: 16px;
     margin: 0 2px 0 2px;
     background-color: #0dcaf0;

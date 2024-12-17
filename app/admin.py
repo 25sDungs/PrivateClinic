@@ -2,7 +2,7 @@ from app import app, db
 from flask import redirect
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole
+from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole,User
 from flask_login import current_user, logout_user
 import dao
 
@@ -18,6 +18,12 @@ class QuyDinhView(AdminView):
     column_list = ['id', 'TenQuyDinh', 'GiaTri', 'MoTa']
     column_searchable_list = ['TenQuyDinh']
     column_editable_list = ['TenQuyDinh']
+
+
+class UserView(AdminView):
+    column_list = ['id', 'username', 'user_role', 'phone']
+    column_searchable_list = ['username','phone']
+    column_editable_list = ['user_role']
 
 
 class ThuocView(AdminView):
@@ -50,7 +56,7 @@ class LogoutView(BaseAdminView):
         logout_user()
         return redirect('/admin')
 
-
+admin.add_view(UserView(User, db.session))
 admin.add_view(ThuocView(Thuoc, db.session))
 admin.add_view(LoaiThuocView(LoaiThuoc, db.session))
 admin.add_view(QuyDinhView(QuyDinh, db.session))

@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum, Double
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, ForeignKey, Enum, Double, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from enum import Enum as RoleEnum
 import hashlib
@@ -53,6 +54,36 @@ class Thuoc(db.Model):
     DonVi_id = Column(Integer, ForeignKey(DonVi.id), nullable=False)
     GiaThuoc = Column(Integer)
     SoLuong = Column(Integer)
+    ThuocTrongPhieuKhams = relationship('ThuocTrongPhieuKham', backref='thuoc', lazy=True)
+
+
+class HoaDon(db.Model):
+    __tablename__ = 'hoa_don'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    TienKham = Column(Double)
+    TienThuoc = Column(Double)
+    TinhTrangThanhToan = Column(Boolean)
+    # mqh 1-1
+    PhieuKham = relationship("PhieuKham", backref="hoadon", uselist=False)
+    # dung back_populates thay the cho backref
+
+
+class PhieuKham(db.Model):
+    __tablename__ = 'phieu_kham'
+    id = Column(String(50), primary_key=True)
+    NgayLapPhieu = Column(DateTime)
+    ThuocTrongPhieuKhams = relationship('ThuocTrongPhieuKham', backref='phieukham', lazy=True)
+    # Tạo mối quan hệ 1-1
+    HoaDon_id = Column(Integer, ForeignKey('hoa_don.id'), unique=True)
+    HoaDon = relationship("HoaDon", backref="phieukham", uselist=False)
+    # dung back_populates thay the cho backref
+
+
+class ThuocTrongPhieuKham(db.Model):
+    PhieuKham_id = Column(String(50), ForeignKey(PhieuKham.id), primary_key=True, nullable=False)
+    Thuoc_id = Column(Integer, ForeignKey(Thuoc.id), primary_key=True, nullable=False)
+    LieuLuong = Column(String(50))
+    CachDung = Column(String(50))
 
 
 if __name__ == '__main__':
@@ -63,15 +94,38 @@ if __name__ == '__main__':
         # dv1 = DonVi(TenDonVi='Vi', SoLuong=12, MoTa='1 vi = 12 vien')
         # db.session.add(l1)
         # db.session.add(dv1)
-
+        #
         # t1 = Thuoc(TenThuoc="ThuocDoc", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=200000, SoLuong=10)
         # t2 = Thuoc(TenThuoc="ThuocGiai", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=5000000, SoLuong=3)
         # db.session.add_all([t1, t2])
         # q1 = QuyDinh(TenQuyDinh='Số Bệnh Nhân Khám', MoTa='Số Bệnh Nhân Khám Trong Ngày', GiaTri=40)
         # q2 = QuyDinh(TenQuyDinh='Số Tiền Khám', MoTa='Số Tiền Khám', GiaTri=100000)
         # db.session.add_all([q1, q2])
-
+        #
         # u = User(username='admin', password=str(hashlib.md5('123456'.encode('utf-8')).hexdigest()),
-        #          user_role=UserRole.ADMIN, gender="Nam",phone='0000000000')
+        #          user_role=UserRole.ADMIN, gender="Nam", phone='0000000000')
         # db.session.add(u)
+        # #Tính tiền thuốc và lấy tiền khám từ db
+        # hd1 = HoaDon(TienThuoc=300000, TienKham=100000, TinhTrangThanhToan=True)
+        # hd2 = HoaDon(TienThuoc=299000, TienKham=100000, TinhTrangThanhToan=True)
+        # hd3 = HoaDon(TienThuoc=894561, TienKham=100000, TinhTrangThanhToan=True)
+        # db.session.add_all([hd1, hd2, hd3])
+        # ngaypk1 = datetime(2024, 12, 30)
+        # pk1 = PhieuKham(id='Phieu1', NgayLapPhieu=ngaypk1, HoaDon_id=1)
+        # ngaypk2 = datetime(2024, 11, 11)
+        # pk2 = PhieuKham(id='Phieu2', NgayLapPhieu=ngaypk2, HoaDon_id=2)
+        # ngaypk3 = datetime(2024,9, 9)
+        # pk3 = PhieuKham(id='Phieu3', NgayLapPhieu=ngaypk3, HoaDon_id=3)
+        #
+        # db.session.add_all([pk1, pk2, pk3])
+        #
+        # Drug1InReport1 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='Phieu1', LieuLuong='10 vien 1 ngay',
+        #                                      CachDung='Uong Sau Khi An')
+        # Drug2InReport1 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='Phieu1', LieuLuong='2 vien 1 ngay',
+        #                                      CachDung='Uong Sau Khi An')
+        # Drug1InReport2 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='Phieu2', LieuLuong='3 vien 1 ngay',
+        #                                      CachDung='Uong Sau Khi An')
+        # Drug1InReport3 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='Phieu3', LieuLuong='5 vien 1 ngay',
+        #                                      CachDung='Uong Sau Khi An')
+        # db.session.add_all([Drug1InReport1, Drug2InReport1, Drug1InReport2, Drug1InReport3])
         db.session.commit()

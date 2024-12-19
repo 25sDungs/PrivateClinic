@@ -1,10 +1,10 @@
 from app import app, db
-from flask import redirect
+from flask import redirect, request
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole,User
+from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole, User
 from flask_login import current_user, logout_user
-import dao
+import dao, utils
 
 admin = Admin(app=app, name='PhongMachTu', template_mode='bootstrap4')
 
@@ -22,7 +22,7 @@ class QuyDinhView(AdminView):
 
 class UserView(AdminView):
     column_list = ['id', 'username', 'user_role', 'phone']
-    column_searchable_list = ['username','phone']
+    column_searchable_list = ['username', 'phone']
     column_editable_list = ['user_role']
 
 
@@ -46,7 +46,19 @@ class BaseAdminView(BaseView):
 class StatsView(BaseAdminView):
     @expose("/")
     def index(self):
-        # ...
+        month = request.args.get('ThangThongKe')
+        type_stats = request.args.get('LoaiThongKe')
+        from_date = request.args.get('from_date')
+        to_date = request.args.get('to_date')
+
+        if type_stats == 'Revenue':
+            rstats = utils.revenue_stats(month=month, from_date=from_date, to_date=to_date)
+            return self.render('admin/stats.html', sum=utils.sum_revenue(rstats), rstats=rstats)
+
+        if type_stats == 'Drug':
+            dstats = utils.drug_stats(month=month, from_date=from_date, to_date=to_date)
+            return self.render('admin/stats.html',dstats=dstats)
+
         return self.render('admin/stats.html')
 
 
@@ -55,6 +67,7 @@ class LogoutView(BaseAdminView):
     def __index__(self):
         logout_user()
         return redirect('/admin')
+
 
 admin.add_view(UserView(User, db.session))
 admin.add_view(ThuocView(Thuoc, db.session))

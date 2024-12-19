@@ -3,31 +3,41 @@
 {% block body %}
 <h1 class="text-center">THỐNG KÊ BÁO CÁO</h1>
 
-<form>
+<form method="get">
     <div class="d-flex justify-content-around">
         <div>
             <label for="LoaiThongKe">Thống Kê:</label>
             <select name="LoaiThongKe" id="LoaiThongKe">
                 <option value="Revenue">Doanh Thu</option>
-                <option value="Thuoc">Thuốc</option>
+                <option value="Drug">Thuốc</option>
             </select>
         </div>
         <div>
             <label for="ThangThongKe">Tháng:</label>
             <select name="ThangThongKe" id="ThangThongKe">
-                <option value="Thang1">Tháng 1</option>
-                <option value="Thang2">Tháng 2</option>
-                <option value="Thang3">Tháng 3</option>
-                <option value="Thang4">Tháng 4</option>
-                <option value="Thang5">Tháng 5</option>
-                <option value="Thang6">Tháng 6</option>
-                <option value="Thang7">Tháng 7</option>
-                <option value="Thang8">Tháng 8</option>
-                <option value="Thang9">Tháng 9</option>
-                <option value="Thang10">Tháng 10</option>
-                <option value="Thang11">Tháng 11</option>
-                <option value="Thang12">Tháng 12</option>
+                <option value="">Chọn</option>
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
             </select>
+        </div>
+    </div>
+    <div>
+        <h5>Thời gian:</h5>
+        <div class="form-group">
+            <input type="date" class="form-control" name="from_date"/>
+        </div>
+        <div class="form-group">
+            <input type="date" class="form-control" name="to_date"/>
         </div>
     </div>
     <div class="text-center">
@@ -35,38 +45,117 @@
     </div>
 </form>
 <div class="row">
-    <div class="col-md-7 col-12">
-        <div class="d-flex justify-content-around">
-            <h3>Ngày</h3>
-            <h3>Số Bệnh Nhân</h3>
-            <h3>Doanh Thu</h3>
-        </div>
-        <div>
-            {% for dt in doanhthu %}
+    <div class="col-md-5 col-12">
+        <table class="table d-flex justify-content-around">
+            {% if rstats %}
+            <tr>
+                <td>Ngày</td>
+                <td>Số bệnh nhân</td>
+                <td>Doanh Thu</td>
+                <td>Tỉ lệ</td>
+            </tr>
+            {% for s in rstats %}
+            <tr>
+                <td>{{ s[0].strftime('%Y-%m-%d') }}</td>
+                <td>{{ s[1] }}</td>
+                <td>
+                    {% if s[-1] %}
+                    {{ '{:,.0f}'.format(s[-1]) }} VNĐ
+                    {% else %}
+                    0 VNĐ
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s[-1] %}
+                    {{ '{:,.1f}'.format(s[-1]/sum*100) }} %
+                    {% else %}
+                    0 %
+                    {% endif %}
+                </td>
+            </tr>
 
             {% endfor %}
-            <div>
+            <tr>
+                <td>Tổng:</td>
+                <td></td>
+                <td>{{ '{:,.0f}'.format(sum) }} VNĐ</td>
+                <td>100 %</td>
+            </tr>
+            {% endif %}
 
-            </div>
-        </div>
+            {% if dstats %}
+            <tr>
+                <td>ID Phiếu Khám</td>
+                <td>Lượng Thuốc Sử Dụng</td>
+            </tr>
+            {% for s in dstats %}
+            <tr>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
     </div>
-    <div class="col-md-5 col-12">
-
+    <div class="col-md-7 col-12">
         <div>
-            <canvas id="myChart"></canvas>
+            <canvas id="revenueChartId"></canvas>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
         <script>
-            const ctx = document.getElementById('myChart');
+            let labels = []
+            let data = []
+            let colors = []
+            let borderColors = []
+            let r,g,b;
 
+            {% for s in rstats %}
+            {% if s[-1] %}
+            labels.push('{{ s[0].strftime('%Y-%m-%d') }}')
+            data.push('{{ s[-1] }}')
+            r = parseInt(Math.random() * 255)
+            g = parseInt(Math.random() * 255)
+            b = parseInt(Math.random() * 255)
+            colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+            borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
+            {% endif %}
+            {% endfor %}
+
+            {% if rstats %}
+            window.onload = function() {
+            const ctx = document.getElementById('revenueChartId')
+            loadChart(ctx, labels, data, 'bar', colors, borderColors)
+            }
+            {% endif %}
+
+            {% for s in dstats %}
+            {% if s[1] %}
+            labels.push('{{ s[0] }}')
+            data.push('{{ s[1] }}')
+            r = parseInt(Math.random() * 255)
+            g = parseInt(Math.random() * 255)
+            b = parseInt(Math.random() * 255)
+            colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+            borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
+            {% endif %}
+            {% endfor %}
+
+            {% if dstats %}
+            window.onload = function() {
+            const ctx = document.getElementById('revenueChartId')
+            loadChart(ctx, labels, data, 'bar', colors, borderColors)
+            }
+            {% endif %}
+            function loadChart(ctx, labels, data, type, colors, borderColors){
             new Chart(ctx, {
-              type: 'bar',
+              type: type,
               data: {
-                labels: ['1', '2', '3', '4', '5', '6','7', '8', '9', '10', '11', '12'],
+                labels: labels,
                 datasets: [{
-                  label: 'Luong Thuoc Su Dung',
-                  data: [6, 11, 3, 5, 2, 3, 0.1, 0.2, 3, 5, 2, 3],
+                  label: 'Biểu Đồ Thống Kê',
+                  data: data,
+                  backgroundColor: colors,
+                  borderColor: borderColors,
                   borderWidth: 1
                 }]
               },
@@ -78,6 +167,9 @@
                 }
               }
             });
+
+
+            }
         </script>
     </div>
 </div>

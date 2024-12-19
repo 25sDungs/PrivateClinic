@@ -1,11 +1,11 @@
 import hashlib
-from app.models import QuyDinh, User
+from app.models import QuyDinh, User, HoaDon
 from app import db
 from flask import render_template, redirect
 
 
-def load_quydinh():
-    return QuyDinh.query.all()
+# def load_quydinh():
+#     return QuyDinh.query.all()
 
 
 def auth_user(username, password, role=None):
@@ -18,6 +18,12 @@ def auth_user(username, password, role=None):
 
 def get_user_by_id(id):
     return User.query.get(id)
+
+
+def load_stast_data(month):
+
+    return HoaDon.query.all()
+
 
 # def change_quydinh_benhnhan(giatri):
 #     item = QuyDinh.query.filter_by(id='1').first()

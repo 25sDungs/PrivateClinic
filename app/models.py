@@ -90,13 +90,13 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
 
-        l1 = LoaiThuoc(TenLoaiThuoc='Thao Duoc')
-        dv1 = DonVi(TenDonVi='Vi', SoLuong=12, MoTa='1 vi = 12 vien')
+        l1 = LoaiThuoc(TenLoaiThuoc='Thảo Dược')
+        dv1 = DonVi(TenDonVi='Vĩ', SoLuong=12, MoTa='1 vi = 12 vien')
         db.session.add(l1)
         db.session.add(dv1)
 
-        t1 = Thuoc(TenThuoc="ThuocDoc", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=200000, SoLuong=10)
-        t2 = Thuoc(TenThuoc="ThuocGiai", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=5000000, SoLuong=3)
+        t1 = Thuoc(TenThuoc="Thuốc Độc", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=200000, SoLuong=10)
+        t2 = Thuoc(TenThuoc="Thuốc Giải", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=5000000, SoLuong=3)
         db.session.add_all([t1, t2])
         q1 = QuyDinh(TenQuyDinh='Số Bệnh Nhân Khám', MoTa='Số Bệnh Nhân Khám Trong Ngày', GiaTri=40)
         q2 = QuyDinh(TenQuyDinh='Số Tiền Khám', MoTa='Số Tiền Khám', GiaTri=100000)
@@ -117,33 +117,33 @@ if __name__ == '__main__':
 
         ngaypk1 = datetime(2024, 12, 6)
         pk1 = PhieuKham(NgayLapPhieu=ngaypk1, HoaDon_id=1)
-        ngaypk2 = datetime(2024, 12, 14)
+        ngaypk2 = datetime(2024, 11, 14)
         pk2 = PhieuKham(NgayLapPhieu=ngaypk2, HoaDon_id=2)
         ngaypk3 = datetime(2024, 12, 19)
         pk3 = PhieuKham(NgayLapPhieu=ngaypk3, HoaDon_id=3)
-        ngaypk4 = datetime(2024, 5, 6)
+        ngaypk4 = datetime(2024, 10, 6)
         pk4 = PhieuKham(NgayLapPhieu=ngaypk1, HoaDon_id=4)
-        ngaypk5 = datetime(2024, 2, 14)
+        ngaypk5 = datetime(2024, 9, 14)
         pk5 = PhieuKham(NgayLapPhieu=ngaypk2, HoaDon_id=5)
         ngaypk6 = datetime(2024, 12, 19)
         pk6 = PhieuKham(NgayLapPhieu=ngaypk3, HoaDon_id=6)
         db.session.add_all([pk1, pk2, pk3, pk4, pk5, pk6])
 
-        Drug1InReport1 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='1', LieuLuong='10 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug2InReport1 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='1', LieuLuong='2 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug1InReport2 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='2', LieuLuong='3 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug1InReport3 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='3', LieuLuong='5 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug1InReport4 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='4', LieuLuong='10 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug2InReport4 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='4', LieuLuong='2 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug1InReport5 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='5', LieuLuong='3 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
-        Drug1InReport6 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='6', LieuLuong='5 vien 1 ngay',
-                                             CachDung='Uong Sau Khi An')
+        Drug1InReport1 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='1', LieuLuong='10 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug2InReport1 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='1', LieuLuong='2 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug1InReport2 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='2', LieuLuong='3 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug1InReport3 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='3', LieuLuong='5 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug1InReport4 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='4', LieuLuong='10 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug2InReport4 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='4', LieuLuong='2 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug1InReport5 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='5', LieuLuong='3 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
+        Drug1InReport6 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='6', LieuLuong='5 viên 1 ngày',
+                                             CachDung='Dùng Sau Khi Ăn')
         db.session.add_all([Drug1InReport1, Drug2InReport1, Drug1InReport2, Drug1InReport3,Drug1InReport4,Drug2InReport4,Drug1InReport5,Drug1InReport6])
         db.session.commit()

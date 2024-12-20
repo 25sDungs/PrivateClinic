@@ -85,13 +85,17 @@
 
             {% if dstats %}
             <tr>
-                <td>ID Phiếu Khám</td>
-                <td>Lượng Thuốc Sử Dụng</td>
+                <td>Tên Thuốc</td>
+                <td>Đơn Vị Thuốc</td>
+                <td>Số Lượng Thuôc</td>
+                <td>Số Lần Dùng</td>
             </tr>
             {% for s in dstats %}
             <tr>
                 <td>{{ s[0] }}</td>
                 <td>{{ s[1] }}</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ s[-1] }}</td>
             </tr>
             {% endfor %}
             {% endif %}
@@ -129,9 +133,9 @@
             {% endif %}
 
             {% for s in dstats %}
-            {% if s[1] %}
+            {% if s[-1] %}
             labels.push('{{ s[0] }}')
-            data.push('{{ s[1] }}')
+            data.push('{{ s[-1] }}')
             r = parseInt(Math.random() * 255)
             g = parseInt(Math.random() * 255)
             b = parseInt(Math.random() * 255)

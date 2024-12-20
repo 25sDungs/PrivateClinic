@@ -1,7 +1,7 @@
 from sqlalchemy import func
 
 from app import db
-from app.models import HoaDon, PhieuKham, ThuocTrongPhieuKham
+from app.models import HoaDon, PhieuKham, ThuocTrongPhieuKham, Thuoc, DonVi
 
 
 def sum_revenue(lists):
@@ -13,13 +13,15 @@ def sum_revenue(lists):
 
 # lấy các tháng có dl
 def get_months_of_data():
-    query = db.session.query(func.day(PhieuKham.NgayLapPhieu).label('day')).distinct()
+    query = db.session.query(func.day(PhieuKham.NgayLapPhieu)).distinct()
     return query.all()
 
 
 def revenue_stats(month=None, from_date=None, to_date=None):
-    p = (db.session.query(PhieuKham.NgayLapPhieu,func.count(PhieuKham.id) ,func.sum(HoaDon.TienKham + HoaDon.TienThuoc))
-         .join(HoaDon, HoaDon.id == PhieuKham.HoaDon_id).group_by(PhieuKham.NgayLapPhieu).order_by(PhieuKham.NgayLapPhieu))
+    p = (
+        db.session.query(PhieuKham.NgayLapPhieu, func.count(PhieuKham.id), func.sum(HoaDon.TienKham + HoaDon.TienThuoc))
+        .join(HoaDon, HoaDon.id == PhieuKham.HoaDon_id).group_by(PhieuKham.NgayLapPhieu).order_by(
+            PhieuKham.NgayLapPhieu))
     if month:
         p = p.filter(func.month(PhieuKham.NgayLapPhieu) == month)
     if from_date:
@@ -31,8 +33,12 @@ def revenue_stats(month=None, from_date=None, to_date=None):
 
 
 def drug_stats(month=None, from_date=None, to_date=None):
-    p = (db.session.query(PhieuKham.id, func.max(ThuocTrongPhieuKham.Thuoc_id).label('max_Thuoc_id'))
-         .join(ThuocTrongPhieuKham, ThuocTrongPhieuKham.PhieuKham_id == PhieuKham.id).group_by(PhieuKham.id))
+    p = (db.session.query(Thuoc.TenThuoc, DonVi.TenDonVi, Thuoc.SoLuong, func.max(ThuocTrongPhieuKham.Thuoc_id))
+         .join(PhieuKham, PhieuKham.id == ThuocTrongPhieuKham.PhieuKham_id)
+         .join(Thuoc, Thuoc.id == ThuocTrongPhieuKham.Thuoc_id)
+         .join(DonVi, DonVi.id == Thuoc.DonVi_id)
+         .group_by(Thuoc.TenThuoc, DonVi.TenDonVi, Thuoc.SoLuong))
+
     if month:
         p = p.filter(func.month(PhieuKham.NgayLapPhieu) == month)
     if from_date:

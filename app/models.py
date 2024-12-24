@@ -35,6 +35,9 @@ class LoaiThuoc(db.Model):
     TenLoaiThuoc = Column(String(50), nullable=False, unique=True)
     Thuocs = relationship('Thuoc', backref='loaithuoc', lazy=True)
 
+    def __str__(self):
+        return self.TenLoaiThuoc
+
 
 class DonVi(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -106,7 +109,7 @@ if __name__ == '__main__':
                  user_role=UserRole.ADMIN, gender="Nam", phone='0000000000')
         db.session.add(u)
 
-        #Tính tiền thuốc và lấy tiền khám từ db
+        # Tính tiền thuốc và lấy tiền khám từ db
         hd1 = HoaDon(TienThuoc=300000, TienKham=100000, TinhTrangThanhToan=True)
         hd2 = HoaDon(TienThuoc=299000, TienKham=100000, TinhTrangThanhToan=True)
         hd3 = HoaDon(TienThuoc=594000, TienKham=100000, TinhTrangThanhToan=True)
@@ -145,5 +148,7 @@ if __name__ == '__main__':
                                              CachDung='Dùng Sau Khi Ăn')
         Drug1InReport6 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='6', LieuLuong='5 viên 1 ngày',
                                              CachDung='Dùng Sau Khi Ăn')
-        db.session.add_all([Drug1InReport1, Drug2InReport1, Drug1InReport2, Drug1InReport3,Drug1InReport4,Drug2InReport4,Drug1InReport5,Drug1InReport6])
+        db.session.add_all(
+            [Drug1InReport1, Drug2InReport1, Drug1InReport2, Drug1InReport3, Drug1InReport4, Drug2InReport4,
+             Drug1InReport5, Drug1InReport6])
         db.session.commit()

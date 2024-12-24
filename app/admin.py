@@ -17,7 +17,7 @@ class AdminView(ModelView):
 class QuyDinhView(AdminView):
     column_list = ['id', 'TenQuyDinh', 'GiaTri', 'MoTa']
     column_searchable_list = ['TenQuyDinh']
-    column_editable_list = ['TenQuyDinh']
+    column_editable_list = ['GiaTri']
 
 
 class UserView(AdminView):
@@ -27,10 +27,10 @@ class UserView(AdminView):
 
 
 class ThuocView(AdminView):
-    column_list = ['id', 'TenThuoc', 'LoaiThuoc_id', 'DonVi', 'GiaThuoc', 'SoLuong']
+    column_list = ['id', 'TenThuoc', 'LoaiThuoc_id', 'DonVi_id', 'GiaThuoc', 'SoLuong']
     column_searchable_list = ['TenThuoc']
     column_filters = ['TenThuoc', 'GiaThuoc']
-    column_editable_list = ['TenThuoc']
+    column_editable_list = ['SoLuong', 'GiaThuoc']
     page_size = 6
 
 
@@ -47,17 +47,25 @@ class StatsView(BaseAdminView):
     @expose("/")
     def index(self):
         month = request.args.get('ThangThongKe')
+        year = request.args.get('NamThongKe')
         type_stats = request.args.get('LoaiThongKe')
         from_date = request.args.get('from_date')
         to_date = request.args.get('to_date')
 
-        if type_stats == 'Revenue':
+        if year and type_stats == 'Revenue':
+            rstats = utils.revenue_stats_by_month(year=year)
+            return self.render('admin/stats.html', sum=utils.sum_revenue(rstats), rstats_year=rstats)
+
+        elif type_stats == 'Revenue':
             rstats = utils.revenue_stats(month=month, from_date=from_date, to_date=to_date)
             return self.render('admin/stats.html', sum=utils.sum_revenue(rstats), rstats=rstats)
 
-        if type_stats == 'Drug':
+        if year and type_stats == 'Drug':
+            dstats = utils.drug_stats_by_month(year=year)
+            return self.render('admin/stats.html', dstats_year=dstats)
+        elif type_stats == 'Drug':
             dstats = utils.drug_stats(month=month, from_date=from_date, to_date=to_date)
-            return self.render('admin/stats.html',dstats=dstats)
+            return self.render('admin/stats.html', dstats=dstats)
 
         return self.render('admin/stats.html')
 

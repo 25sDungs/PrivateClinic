@@ -1,0 +1,55 @@
+{% extends 'layout/base.html' %}
+{% block content %}
+<link rel="stylesheet" href="static/styleExe/lapdanhsach.css">
+<div class="container">
+    <!-- Header Section -->
+    <h1>LẬP DANH SÁCH KHÁM</h1>
+
+    <!-- Date Selection Section -->
+    <div class="date-section">
+        <label for="date">Ngày:</label>
+        <input type="date" id="date">
+        <button id="viewBtn">Xem</button>
+    </div>
+
+    <!-- Danh Sách Khám Table -->
+    <div class="list-section">
+        <h3>Danh Sách Khám <input type="text" readonly></h3>
+        <!-- {% if matched_arrangements %}-->
+        <table>
+            <thead>
+            <tr>
+                <th>Mã Lịch Khám</th>
+                <th>Họ Tên</th>
+                <th>Giới Tính</th>
+                <th>Số Điện Thoại</th>
+                <th>Địa Chỉ</th>
+                <th>Tình Trạng Thanh Toán</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for arr in matched_arrangements %}
+            <tr>
+                <td> {{ arr.id_arrangement }} </td>
+                <td> {{ arr.patient_name }} </td>
+                <td> {{ arr.gender }} </td>
+                <td> {{ arr.phone }} </td>
+                <td> {{ arr.address }} </td>
+                <td>Đã Xác Nhận</td>
+            </tr>
+            {% endfor %}
+            <script src="{{ url_for('static', filename='scriptExe/date_sync.js') }}"></script>
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info mt-1">CHƯA CÓ DANH SÁCH KHÁM NÀO TRONG NGÀY HÔM NAY!!</div>
+        {% endif %}
+    </div>
+    <button id="generateBtn" class="final-btn">Lập Danh Sách Khám</button>
+    <!-- jquery cdn link  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- custom js file link  -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+</div>
+{% endblock %}

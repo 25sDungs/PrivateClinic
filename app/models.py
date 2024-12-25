@@ -22,6 +22,15 @@ class User(db.Model, UserMixin):
     phone = Column(String(20), nullable=False)
     user_role = Column(Enum(UserRole), default=UserRole.USER)
 
+    def is_doctor(self):
+        return self.user_role == UserRole.DOCTOR
+
+    def is_nurse(self):
+        return self.user_role == UserRole.NURSE
+
+    def is_admin(self):
+        return self.user_role == UserRole.ADMIN
+
 
 class QuyDinh(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -58,6 +67,9 @@ class Thuoc(db.Model):
     GiaThuoc = Column(Integer)
     SoLuong = Column(Integer)
     ThuocTrongPhieuKhams = relationship('ThuocTrongPhieuKham', backref='thuoc', lazy=True)
+
+    def __str__(self):
+        return self.TenThuoc
 
 
 class HoaDon(db.Model):

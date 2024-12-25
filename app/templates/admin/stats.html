@@ -194,7 +194,7 @@
             {% if rstats %}
             window.onload = function() {
             const ctx = document.getElementById('chartId')
-            loadChart(ctx, labels, data, 'bar', colors, borderColors)
+            loadChart(ctx, labels, data, 'doughnut', colors, borderColors)
             }
             {% endif %}
 
@@ -257,7 +257,7 @@
             {% if dstats_year %}
                 window.onload = function() {
                 const ctx = document.getElementById('chartId')
-                loadChart(ctx, labels, data, 'bar', colors, borderColors)
+                loadChart(ctx, labels, data, 'doughnut', colors, borderColors)
                 }
             {% endif %}
 

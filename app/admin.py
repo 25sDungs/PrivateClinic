@@ -2,7 +2,7 @@ from app import app, db
 from flask import redirect, request
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
-from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole, User
+from app.models import Thuoc, LoaiThuoc, QuyDinh, UserRole, User, DonVi
 from flask_login import current_user, logout_user
 import dao, utils
 
@@ -11,7 +11,12 @@ admin = Admin(app=app, name='PhongMachTu', template_mode='bootstrap4')
 
 class AdminView(ModelView):
     def is_accessible(self):
-        return current_user.is_authenticated and current_user.user_role.__eq__(UserRole.ADMIN)
+        return current_user.is_authenticated and current_user.is_admin()
+
+
+class BaseAdminView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.is_admin()
 
 
 class QuyDinhView(AdminView):
@@ -26,21 +31,22 @@ class UserView(AdminView):
     column_editable_list = ['user_role']
 
 
+class LoaiThuocView(AdminView):
+    column_list = ['id', 'TenLoaiThuoc', 'Thuocs']
+    column_editable_list = ['TenLoaiThuoc']
+
+
+class DonViView(AdminView):
+    column_list = ['id', 'TenDonVi', 'SoLuong', 'MoTa', 'Thuocs']
+    column_editable_list = ['TenDonVi']
+
+
 class ThuocView(AdminView):
-    column_list = ['id', 'TenThuoc', 'LoaiThuoc_id', 'DonVi_id', 'GiaThuoc', 'SoLuong']
+    column_list = ['id', 'TenThuoc', 'GiaThuoc', 'SoLuong']
     column_searchable_list = ['TenThuoc']
     column_filters = ['TenThuoc', 'GiaThuoc']
     column_editable_list = ['SoLuong', 'GiaThuoc']
     page_size = 6
-
-
-class LoaiThuocView(AdminView):
-    column_list = ['id', 'TenLoaiThuoc']
-
-
-class BaseAdminView(BaseView):
-    def is_accessible(self):
-        return current_user.is_authenticated and current_user.user_role.__eq__(UserRole.ADMIN)
 
 
 class StatsView(BaseAdminView):
@@ -78,8 +84,9 @@ class LogoutView(BaseAdminView):
 
 
 admin.add_view(UserView(User, db.session))
-admin.add_view(ThuocView(Thuoc, db.session))
 admin.add_view(LoaiThuocView(LoaiThuoc, db.session))
+admin.add_view(DonViView(DonVi, db.session))
+admin.add_view(ThuocView(Thuoc, db.session))
 admin.add_view(QuyDinhView(QuyDinh, db.session))
 admin.add_view(StatsView(name='Thống Kê'))
 admin.add_view(LogoutView(name='Đăng Xuất'))

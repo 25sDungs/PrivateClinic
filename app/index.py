@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect
 from flask_login import login_user, logout_user
-from app.models import UserRole
-from app import app, login
+from app.models import UserRole, Thuoc
+from app import app, login, db
 import dao
 
 
@@ -18,6 +18,31 @@ def login_admin_process():
     if u:
         login_user(u)
     return redirect('/admin')
+
+
+# @app.route('/add-drug', methods=['POST'])
+# def add_drug():
+#     print(request.form.get('action'))
+#     if request.form.get('action') == 'add':
+#         tenthuoc = request.form['tenthuoc']
+#         loaithuoc = request.form['loaithuoc']
+#         soluong = int(request.form['soluong'])
+#         donvi = request.form['donvi']
+#         giathuoc = float(request.form['giathuoc'])
+#
+#         new_drug = Thuoc(
+#             TenThuoc=tenthuoc,
+#             LoaiThuoc_id=loaithuoc,
+#             SoLuong=soluong,
+#             DonVi_id=donvi,
+#             GiaThuoc=giathuoc
+#         )
+#         db.session.add(new_drug)
+#         db.session.commit()
+#         drugs = dao.load_drugs()
+#         return render_template('admin/quanlythuoc.html', drugs=drugs)
+#  return redirect('admin/thuocview/')
+
 
 
 # @app.route("/update", methods=['post'])

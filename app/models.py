@@ -32,6 +32,17 @@ class User(db.Model, UserMixin):
         return self.user_role == UserRole.ADMIN
 
 
+class Doctor(User):
+    __tablename__ = 'doctor'
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)  # Kế thừa từ User
+    specialization = Column(String(100), nullable=False)
+
+class Nurse(User):
+    __tablename__ = 'curse'
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)  # Kế thừa từ User
+    specialization = Column(String(100), nullable=False)
+
+
 class QuyDinh(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     TenQuyDinh = Column(String(50), nullable=False, unique=True)
@@ -80,24 +91,23 @@ class HoaDon(db.Model):
     TinhTrangThanhToan = Column(Boolean)
     # mqh 1-1
     phieu_kham = relationship("PhieuKham", back_populates="hoa_don", uselist=False)
-    # dung back_populates thay the cho backref
 
 
 class PhieuKham(db.Model):
     __tablename__ = 'phieu_kham'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    NgayLapPhieu = Column(DateTime)
+    NgayLapPhieu = Column(DateTime, default=datetime.now())
+    LoaiBenh = Column(String(50))
     ThuocTrongPhieuKhams = relationship('ThuocTrongPhieuKham', backref='phieukham', lazy=True)
-    # Tạo mối quan hệ 1-1
+    # Mối quan hệ 1-1
     HoaDon_id = Column(Integer, ForeignKey('hoa_don.id'), unique=True)
     hoa_don = relationship("HoaDon", back_populates="phieu_kham", uselist=False)
-    # dung back_populates thay the cho backref
 
 
 class ThuocTrongPhieuKham(db.Model):
     PhieuKham_id = Column(Integer, ForeignKey(PhieuKham.id), primary_key=True, nullable=False)
     Thuoc_id = Column(Integer, ForeignKey(Thuoc.id), primary_key=True, nullable=False)
-    LieuLuong = Column(String(50))
+    LieuLuong = Column(Integer)
     CachDung = Column(String(50))
 
 
@@ -106,8 +116,8 @@ if __name__ == '__main__':
         db.create_all()
 
         l1 = LoaiThuoc(TenLoaiThuoc='Thảo Dược')
-        dv1 = DonVi(TenDonVi='Vĩ', SoLuong=12, MoTa='1 vi = 12 vien')
         db.session.add(l1)
+        dv1 = DonVi(TenDonVi='Vĩ', SoLuong=12, MoTa='1 vi = 12 vien')
         db.session.add(dv1)
 
         t1 = Thuoc(TenThuoc="Thuốc Độc", LoaiThuoc_id=1, DonVi_id=1, GiaThuoc=200000, SoLuong=10)
@@ -144,21 +154,21 @@ if __name__ == '__main__':
         pk6 = PhieuKham(NgayLapPhieu=ngaypk3, HoaDon_id=6)
         db.session.add_all([pk1, pk2, pk3, pk4, pk5, pk6])
 
-        Drug1InReport1 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='1', LieuLuong='10 viên 1 ngày',
+        Drug1InReport1 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='1', LieuLuong=10,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug2InReport1 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='1', LieuLuong='2 viên 1 ngày',
+        Drug2InReport1 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='1', LieuLuong=2,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug1InReport2 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='2', LieuLuong='3 viên 1 ngày',
+        Drug1InReport2 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='2', LieuLuong=3,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug1InReport3 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='3', LieuLuong='5 viên 1 ngày',
+        Drug1InReport3 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='3', LieuLuong=5,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug1InReport4 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='4', LieuLuong='10 viên 1 ngày',
+        Drug1InReport4 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='4', LieuLuong=10,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug2InReport4 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='4', LieuLuong='2 viên 1 ngày',
+        Drug2InReport4 = ThuocTrongPhieuKham(Thuoc_id='2', PhieuKham_id='4', LieuLuong=2,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug1InReport5 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='5', LieuLuong='3 viên 1 ngày',
+        Drug1InReport5 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='5', LieuLuong=3,
                                              CachDung='Dùng Sau Khi Ăn')
-        Drug1InReport6 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='6', LieuLuong='5 viên 1 ngày',
+        Drug1InReport6 = ThuocTrongPhieuKham(Thuoc_id='1', PhieuKham_id='6', LieuLuong=5,
                                              CachDung='Dùng Sau Khi Ăn')
         db.session.add_all(
             [Drug1InReport1, Drug2InReport1, Drug1InReport2, Drug1InReport3, Drug1InReport4, Drug2InReport4,

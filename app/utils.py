@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from app import db
-from app.models import HoaDon, PhieuKham, ThuocTrongPhieuKham, Thuoc, DonVi, LoaiThuoc
+from app.models import HoaDon, PhieuKham, ThuocTrongPhieuKham, Thuoc, DonVi, LoaiThuoc, QuyDinh
 
 current_year = datetime.now().year
 one_year_ago = datetime.now() - timedelta(days=365)
@@ -82,3 +82,29 @@ def load_thuoc_donvi_loaithuoc():
          .join(LoaiThuoc, Thuoc.LoaiThuoc_id == LoaiThuoc.id)
          .join(DonVi, Thuoc.DonVi_id == DonVi.id))
     return p.all()
+
+
+def load_thuoc_trong_hoa_don(hoadon_id):
+    if hoadon_id:
+        query = (
+            db.session.query(Thuoc.TenThuoc, DonVi.TenDonVi, ThuocTrongPhieuKham.LieuLuong,
+                             Thuoc.GiaThuoc, func.sum(Thuoc.GiaThuoc * ThuocTrongPhieuKham.LieuLuong))
+            .join(Thuoc, Thuoc.id == ThuocTrongPhieuKham.Thuoc_id)
+            .join(DonVi, DonVi.id == Thuoc.DonVi_id)
+            .group_by(Thuoc.TenThuoc, DonVi.TenDonVi, ThuocTrongPhieuKham.LieuLuong, Thuoc.GiaThuoc)
+            .filter(ThuocTrongPhieuKham.PhieuKham_id.__eq__(hoadon_id)))
+        return query.all()
+
+
+def load_bills_data(kw=None, date=None):
+    query = (db.session.query(HoaDon.id, PhieuKham.NgayLapPhieu,
+                              func.sum(Thuoc.GiaThuoc * ThuocTrongPhieuKham.LieuLuong), HoaDon.TinhTrangThanhToan)
+             .join(HoaDon, HoaDon.id == PhieuKham.HoaDon_id)
+             .join(ThuocTrongPhieuKham, ThuocTrongPhieuKham.PhieuKham_id == PhieuKham.id)
+             .join(Thuoc, Thuoc.id == ThuocTrongPhieuKham.Thuoc_id)
+             .group_by(HoaDon.id, PhieuKham.NgayLapPhieu).order_by(-HoaDon.id))
+    if kw:
+        query = query.filter(HoaDon.id.contains(kw))
+    if date:
+        query = query.filter(PhieuKham.NgayLapPhieu.__eq__(date))
+    return query.all()

@@ -1,0 +1,71 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<section id="thuNgan" class="thuNgan mt-5">
+    <div class="container-lg p-5">
+        <form>
+            <div class="row billInput mb-3">
+                <div class="col">
+                    <label for="billID">Tìm kiếm hóa đơn:</label>
+                    <input type="text" id="billID" name="billID" class="border" placeholder="Tìm kiếm">
+                </div>
+                <div class="col">
+                    <label for="billDate">Nhập ngày: </label>
+                    <input type="date" id="billDate" name="billDate" class="border">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center mb-3">
+                    <label></label>
+                    <input type="submit" value="Tìm Kiếm" class="idSearchBtn">
+                </div>
+            </div>
+
+
+        </form>
+        <div class="row">
+            <div class="table-responsive-lg">
+                <table class="table align-items-center table-striped table-bordered border-dark table-hover">
+                    <thead class="thead-light text-center">
+                    <tr>
+                        <th scope="col">Mã hóa đơn</th>
+                        <th scope="col">Họ Tên</th>
+                        <th scope="col">Ngày Khám</th>
+                        <th scope="col">Tiền Khám</th>
+                        <th scope="col">Tiền Thuốc</th>
+                        <th scope="col">Tổng Tiền</th>
+                        <th scope="col">Tình trạng</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for b in bills %}
+                    <tr class="text-center">
+                        <th scope="row">{{ b[0] }}</th>
+                        <td>Dũng</td>
+                        <td>{{ b[1].strftime('%Y-%m-%d') }}</td>
+                        <td>{{ '{:,.0f}'.format(tienkham) }} VNĐ</td>
+                        <td>{{ '{:,.0f}'.format(b[2]) }} VNĐ</td>
+                        <td>{{ '{:,.0f}'.format(b[2]+tienkham) }} VNĐ</td>
+                        {% if b[3] == 0 %}
+                        <td>
+                            <a class=" bg-transparent text-danger" href='/bills/{{ b.id }}'>Thanh Toán</a>
+                        </td>
+                        {% else %}
+                        <td>
+                            <a class=" bg-transparent text-secondary" href='/bills/{{ b.id }}'>Đã thanh Toán</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/mainStyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/thungan.css') }}">
+{% endblock %}

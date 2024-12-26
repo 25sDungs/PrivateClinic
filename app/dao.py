@@ -12,6 +12,20 @@ from flask import render_template, redirect
 #     return d
 
 
+def is_pay(hoadon_id=None):
+    p = HoaDon.query.get(hoadon_id).TinhTrangThanhToan
+    if p:
+        return True
+    return False
+
+
+def load_bills(kw=None):
+    query = HoaDon.query
+    if kw:
+        query = query.filter(HoaDon.id.contains(kw))
+    return query.all()
+
+
 def auth_user(username, password, role=None):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     u = User.query.filter(User.username.__eq__(username), User.password.__eq__(password))

@@ -1,8 +1,8 @@
 from flask import render_template, request, redirect
 from flask_login import login_user, logout_user
-from app.models import UserRole, Thuoc
+from app.models import UserRole, Thuoc, QuyDinh
 from app import app, login, db
-import dao
+import dao, utils
 
 
 @app.route('/')
@@ -44,7 +44,6 @@ def login_admin_process():
 #  return redirect('admin/thuocview/')
 
 
-
 # @app.route("/update", methods=['post'])
 # def quydinh_process():
 #     if 'btnCnBenhNhan' in request.form:
@@ -61,6 +60,28 @@ def login_admin_process():
 @login.user_loader
 def load_user(user_id):
     return dao.get_user_by_id(user_id)
+
+
+# Hoa Don Chuc Nang
+@app.route("/bills/<int:bill_id>", methods=['GET', 'POST'])
+def bill_detail(bill_id):
+    thuocs = utils.load_thuoc_trong_hoa_don(bill_id)
+    sum = utils.sum_revenue(thuocs)
+    tienkham = QuyDinh.query.get(2).GiaTri
+    tinhtrangthanhtoan = dao.is_pay(bill_id)
+    return render_template('chitiethoadon.html', tinhtrangthanhtoan=tinhtrangthanhtoan,
+                           sum=sum, tienkham=tienkham, thuocs=thuocs,mahoadon=bill_id)
+
+
+@app.route('/bills', methods=['GET', 'POST'])
+def bill_process():
+    kw = request.args.get('billID')
+    date = request.args.get('billDate')
+    # bills = dao.load_bills(kw=kw)
+    bills = utils.load_bills_data(kw=kw, date=date)
+    tienkham = QuyDinh.query.get(2).GiaTri
+
+    return render_template('thungan.html', tienkham=tienkham, bills=bills)
 
 
 if __name__ == '__main__':

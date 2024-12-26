@@ -243,7 +243,7 @@
             {% if dstats_year %}
                 {% for s in dstats_year %}
                 {% if s[0] %}
-                labels.push('{{s[1]}}{{s[0]}}')
+                labels.push('{{s[1]}} Tháng{{s[0]}}')
                 data.push('{{ s[-1] }}')
                 r = parseInt(Math.random() * 255)
                 g = parseInt(Math.random() * 255)

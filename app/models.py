@@ -22,6 +22,8 @@ class User(db.Model, UserMixin):
     phone = Column(String(20), nullable=False)
     user_role = Column(Enum(UserRole), default=UserRole.USER)
 
+    phieukhams = relationship("PhieuKham", backref="User", uselist=False)
+
     def is_doctor(self):
         return self.user_role == UserRole.DOCTOR
 
@@ -35,12 +37,13 @@ class User(db.Model, UserMixin):
 class Doctor(User):
     __tablename__ = 'doctor'
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)  # Kế thừa từ User
-    specialization = Column(String(100), nullable=False)
+    specialization = Column(String(50), nullable=False)
+
 
 class Nurse(User):
-    __tablename__ = 'curse'
+    __tablename__ = 'nurse'
     id = Column(Integer, ForeignKey('user.id'), primary_key=True)  # Kế thừa từ User
-    specialization = Column(String(100), nullable=False)
+    ChucVu = Column(String(50), nullable=False)
 
 
 class QuyDinh(db.Model):
@@ -97,11 +100,13 @@ class PhieuKham(db.Model):
     __tablename__ = 'phieu_kham'
     id = Column(Integer, primary_key=True, autoincrement=True)
     NgayLapPhieu = Column(DateTime, default=datetime.now())
-    LoaiBenh = Column(String(50))
     ThuocTrongPhieuKhams = relationship('ThuocTrongPhieuKham', backref='phieukham', lazy=True)
     # Mối quan hệ 1-1
     HoaDon_id = Column(Integer, ForeignKey('hoa_don.id'), unique=True)
+    LoaiBenh = Column(String(50))
     hoa_don = relationship("HoaDon", back_populates="phieu_kham", uselist=False)
+    BacSiLapPhieu = Column(String(50), nullable=True)
+    BenhNhan_id = Column(Integer, ForeignKey(User.id), nullable=True)
 
 
 class ThuocTrongPhieuKham(db.Model):

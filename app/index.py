@@ -77,7 +77,6 @@ def bill_detail(bill_id):
 def bill_process():
     kw = request.args.get('billID')
     date = request.args.get('billDate')
-    # bills = dao.load_bills(kw=kw)
     bills = utils.load_bills_data(kw=kw, date=date)
     tienkham = QuyDinh.query.get(2).GiaTri
 

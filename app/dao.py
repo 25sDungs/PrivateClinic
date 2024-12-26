@@ -1,5 +1,5 @@
 import hashlib
-from app.models import User, HoaDon, Thuoc, QuyDinh
+from app.models import User, HoaDon, Thuoc, QuyDinh, PhieuKham, ThuocTrongPhieuKham
 from app import db
 from flask import render_template, redirect
 
@@ -36,6 +36,38 @@ def auth_user(username, password, role=None):
 
 def get_user_by_id(id):
     return User.query.get(id)
+
+
+def load_thuoc():
+    return Thuoc.query.all()
+
+
+# Lap Phieu Kham
+def them_phieu_kham(ngay, benh):
+    tienKham = QuyDinh.query.get(2).GiaTri
+    hd = HoaDon(TienThuoc=0, TienKham=tienKham, TinhTrangThanhToan=False)
+    db.session.add(hd)
+    db.session.commit()
+    pk = PhieuKham(NgayLapPhieu=ngay, LoaiBenh=benh, HoaDon_id=hd.id)
+    db.session.add(pk)
+    db.session.commit()
+    return pk.id
+
+
+def cap_nhat_tien_thuoc(phieu_id, tien):
+    phieu = PhieuKham.query.filter(PhieuKham.id == phieu_id).first()
+    hoadon = HoaDon.query.get(phieu.HoaDon_id)
+    hoadon.TienThuoc = tien
+    db.session.commit()
+
+
+def tao_thuoc_trong_phieu_kham(ten, SoLuong, CachDung, phieu_id):
+    thuoc = Thuoc.query.filter(Thuoc.TenThuoc.contains(ten)).first()
+    DrugInReport = ThuocTrongPhieuKham(Thuoc_id=thuoc.id, PhieuKham_id=phieu_id, LieuLuong=SoLuong,
+                                       CachDung=CachDung)
+    db.session.add(DrugInReport)
+    db.session.commit()
+    return float(thuoc.GiaThuoc * SoLuong)
 
 # def change_quydinh_benhnhan(giatri):
 #     item = QuyDinh.query.filter_by(id='1').first()
